@@ -1,0 +1,25 @@
+conf
+log file /etc/frr/frr.log
+!
+debug zebra kernel
+debug zebra rib detailed
+debug zebra dplane
+debug zebra dplane dpdk
+!
+ipv6 route a:0:3::/48 d:ffff:3:13::3 eth0
+!
+interface eth0
+ ipv6 address d:ffff:3:13::1/64
+exit
+!
+interface eth2
+ ipv6 address d:0:3:31::1/64
+ ipv6 ospf6 area 0
+exit
+!
+router ospf6
+ ospf6 router-id 3.3.3.3
+ redistribute static
+exit
+!
+end

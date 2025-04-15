@@ -1,0 +1,190 @@
+{
+    "server-1": {
+        "deployment_states": {
+            "service-1": {
+                "metadata": {
+                    "name": "service-1"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            }
+        },
+        "service_states": {
+            "service-1": {
+                "metadata": {
+                    "name": "service-1",
+                    "labels": {
+                        "app": "service-1"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:1::"
+                }
+            }
+        }
+    },
+    "server-2": {
+        "deployment_states": {
+            "service-2": {
+                "metadata": {
+                    "name": "service-2"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            },
+            "service-4": {
+                "metadata": {
+                    "name": "service-4"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            }
+        },
+        "service_states": {
+            "service-2": {
+                "metadata": {
+                    "name": "service-2",
+                    "labels": {
+                        "app": "service-2"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:2::"
+                }
+            },
+            "service-4": {
+                "metadata": {
+                    "name": "service-4",
+                    "labels": {
+                        "app": "service-4"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:4::"
+                }
+            }
+        }
+    },
+    "server-3": {
+        "deployment_states": {
+            "service-3": {
+                "metadata": {
+                    "name": "service-3"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            }
+        },
+        "service_states": {
+            "service-3": {
+                "metadata": {
+                    "name": "service-3",
+                    "labels": {
+                        "app": "service-3"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:3::"
+                }
+            }
+        }
+    },
+    "server-4": {
+        "deployment_states": {
+            "service-1": {
+                "metadata": {
+                    "name": "service-1"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            }
+        },
+        "service_states": {
+            "service-1": {
+                "metadata": {
+                    "name": "service-1",
+                    "labels": {
+                        "app": "service-1"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:1::"
+                }
+            }
+        }
+    },
+    "server-5": {
+        "deployment_states": {
+            "service-2": {
+                "metadata": {
+                    "name": "service-2"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            }
+        },
+        "service_states": {
+            "service-2": {
+                "metadata": {
+                    "name": "service-2",
+                    "labels": {
+                        "app": "service-2"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:2::"
+                }
+            }
+        }
+    },
+    "server-6": {
+        "deployment_states": {
+            "service-3": {
+                "metadata": {
+                    "name": "service-3"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            },
+            "service-4": {
+                "metadata": {
+                    "name": "service-4"
+                },
+                "status": {
+                    "replicas": 1
+                }
+            }
+        },
+        "service_states": {
+            "service-3": {
+                "metadata": {
+                    "name": "service-3",
+                    "labels": {
+                        "app": "service-3"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:3::"
+                }
+            },
+            "service-4": {
+                "metadata": {
+                    "name": "service-4",
+                    "labels": {
+                        "app": "service-4"
+                    }
+                },
+                "spec": {
+                    "clusterIP": "a:0:4::"
+                }
+            }
+        }
+    }
+}

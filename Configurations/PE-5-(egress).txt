@@ -1,0 +1,194 @@
+conf
+log file /etc/frr/frr.log
+!
+ipv6 prefix-list service-1 seq 5 permit a:0:1::/48
+ipv6 prefix-list service-2 seq 10 permit a:0:2::/48
+ipv6 prefix-list service-3 seq 15 permit a:0:3::/48
+ipv6 prefix-list service-4 seq 20 permit a:0:4::/48
+!
+debug zebra kernel
+debug zebra rib detailed
+debug zebra nht detailed
+debug zebra dplane detailed
+debug zebra dplane dpdk
+debug zebra nexthop detail
+debug bgp updates in
+debug bgp updates out
+debug bgp zebra
+!
+vrf near-2
+exit-vrf
+!
+vrf far-2
+exit-vrf
+!
+vrf cloud-2
+exit-vrf
+!
+interface eth0
+ ipv6 address d:0:4:52::5/64
+ ipv6 ospf6 area 0
+exit
+!
+interface eth1
+ ipv6 address d:0:5:52::5/64
+ ipv6 ospf6 area 0
+exit
+!
+interface eth2
+ ipv6 address d:0:6:52::5/64
+ ipv6 ospf6 area 0
+exit
+!
+interface eth5
+ ipv6 address b:0:15::5/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+exit
+!
+interface lo
+ ipv6 address b:ffff:ffff:5::/128
+ ipv6 router isis srv6
+ isis circuit-type level-1
+ isis passive
+exit
+!
+interface lo1
+ ipv6 address b:0:0:5::1/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+ isis passive
+exit
+!
+router bgp 100
+ bgp router-id 0.0.0.5
+ bgp log-neighbor-changes
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ neighbor VPN peer-group
+ neighbor VPN remote-as 100
+ neighbor VPN update-source lo
+ neighbor b:ffff:ffff:2:: peer-group VPN
+ neighbor b:ffff:ffff:3:: peer-group VPN
+ neighbor b:ffff:ffff:4:: peer-group VPN
+ !
+ segment-routing srv6
+  locator Loc
+ exit
+ !
+ address-family ipv6 vpn
+  neighbor VPN activate
+  neighbor VPN route-map anycast-ip out
+ exit-address-family
+exit
+!
+router bgp 100 vrf near-2
+ bgp router-id 0.0.0.5
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ !
+ address-family ipv6 unicast
+  redistribute ospf6
+  sid vpn export 1
+  rd vpn export 100:4
+  nexthop vpn export b:0:0:5:1::
+  rt vpn import 100:4
+  rt vpn export 100:1
+  export vpn
+  import vpn
+ exit-address-family
+exit
+!
+router bgp 100 vrf far-2
+ bgp router-id 0.0.0.5
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ !
+ address-family ipv6 unicast
+  redistribute ospf6
+  sid vpn export 2
+  rd vpn export 100:5
+  nexthop vpn export b:0:0:5:2::
+  rt vpn import 100:4
+  rt vpn export 100:2
+  export vpn
+  import vpn
+ exit-address-family
+exit
+!
+router bgp 100 vrf cloud-2
+ bgp router-id 0.0.0.5
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ !
+ address-family ipv6 unicast
+  redistribute ospf6
+  sid vpn export 3
+  rd vpn export 100:6
+  nexthop vpn export b:0:0:5:3::
+  rt vpn import 100:4
+  rt vpn export 100:3
+  export vpn
+  import vpn
+ exit-address-family
+exit
+!
+router ospf6 vrf near-2
+ ospf6 router-id 0.0.0.5
+ redistribute bgp
+exit
+!
+router ospf6 vrf far-2
+ ospf6 router-id 0.0.0.5
+ redistribute bgp
+exit
+!
+router ospf6 vrf cloud-2
+ ospf6 router-id 0.0.0.5
+ redistribute bgp
+exit
+!
+router isis srv6
+ is-type level-1
+ net 49.0001.0005.0005.0005.00
+ topology ipv6-unicast
+ segment-routing on
+exit
+!
+route-map anycast-ip permit 10
+ match ipv6 address prefix-list service-1
+ set extcommunity bandwidth 50
+exit
+!
+route-map anycast-ip permit 15
+ match ipv6 address prefix-list service-2
+ set extcommunity bandwidth 1000
+exit
+!
+route-map anycast-ip permit 20
+ match ipv6 address prefix-list service-3
+ set extcommunity bandwidth 2000
+exit
+!
+route-map anycast-ip permit 25
+ match ipv6 address prefix-list service-4
+ set extcommunity bandwidth 400
+exit
+!
+route-map anycast-ip permit 30
+exit
+!
+segment-routing
+ srv6
+  locators
+   locator Loc
+    prefix b:0:0:5::/64 block-len 40 node-len 24 func-bits 16
+   exit
+   !
+  exit
+  !
+ exit
+ !
+exit
+!
+end

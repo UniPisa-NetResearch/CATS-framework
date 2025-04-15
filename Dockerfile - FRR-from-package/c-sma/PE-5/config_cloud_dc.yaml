@@ -1,0 +1,17 @@
+apiVersion: v1
+clusters:
+- cluster:
+    server: http://[d:ffff:6:26::6]:5050
+  name: simulated-cluster
+contexts:
+- context:
+    cluster: simulated-cluster
+    user: simulated-user
+  name: simulated-context
+current-context: simulated-context
+kind: Config
+preferences: {}
+users:
+- name: simulated-user
+  user:
+    token: fake-token

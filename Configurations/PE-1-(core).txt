@@ -1,0 +1,46 @@
+conf
+log file /etc/frr/frr.log
+!
+debug zebra kernel
+debug zebra rib detailed
+debug zebra dplane
+debug zebra dplane dpdk
+!
+interface eth2
+ ipv6 address b:0:21::1/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+exit
+!
+interface eth3
+ ipv6 address b:0:13::1/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+exit
+!
+interface eth4
+ ipv6 address b:0:41::1/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+exit
+!
+interface eth5
+ ipv6 address b:0:15::1/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+exit
+!
+interface lo
+ ipv6 address b:ffff:ffff:1::/128
+ ipv6 router isis srv6
+ isis circuit-type level-1
+ isis passive
+exit
+!
+router isis srv6
+ is-type level-1
+ net 49.0001.0001.0001.0001.00
+ topology ipv6-unicast
+exit
+!
+end

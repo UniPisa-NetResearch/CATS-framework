@@ -1,0 +1,149 @@
+conf
+log file /etc/frr/frr.log
+!
+debug zebra kernel
+debug zebra rib detailed
+debug zebra nht detailed
+debug zebra dplane detailed
+debug zebra dplane dpdk
+debug zebra nexthop detail
+debug bgp updates in
+debug bgp updates out
+debug bgp zebra
+!
+vrf client-edge
+exit-vrf
+!
+vrf near-edge
+exit-vrf
+!
+vrf far-edge
+exit-vrf
+!
+vrf cloud
+exit-vrf
+!
+interface eth0
+ ipv6 address e:0:1:12::2/64
+ ipv6 ospf6 area 0
+exit
+!
+interface eth2
+ ipv6 address b:0:21::2/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+exit
+!
+interface lo
+ ipv6 address b:ffff:ffff:2::/128
+ ipv6 router isis srv6
+ isis circuit-type level-1
+ isis passive
+exit
+!
+interface lo1
+ ipv6 address b:0:0:2::1/64
+ ipv6 router isis srv6
+ isis circuit-type level-1
+ isis passive
+exit
+!
+router bgp 100
+ bgp router-id 0.0.0.2
+ bgp log-neighbor-changes
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ bgp bestpath bandwidth default-weight-for-missing
+ neighbor VPN peer-group
+ neighbor VPN remote-as 100
+ neighbor VPN update-source lo
+ neighbor b:ffff:ffff:3:: peer-group VPN
+ neighbor b:ffff:ffff:4:: peer-group VPN
+ neighbor b:ffff:ffff:5:: peer-group VPN
+ !
+ segment-routing srv6
+  locator Loc
+ exit
+ !
+ address-family ipv6 vpn
+  neighbor VPN activate
+ exit-address-family
+exit
+!
+router bgp 100 vrf client-edge
+ bgp router-id 0.0.0.2
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ !
+ address-family ipv6 unicast
+  redistribute ospf6
+  sid vpn export auto
+  rd vpn export 100:7
+  nexthop vpn export b:0:0:2::
+  rt vpn export 100:4
+  export vpn
+ exit-address-family
+exit
+!
+router bgp 100 vrf near-edge
+ bgp router-id 0.0.0.2
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ bgp bestpath bandwidth default-weight-for-missing
+ !
+ address-family ipv6 unicast
+  rt vpn import 100:1
+  import vpn
+ exit-address-family
+exit
+!
+router bgp 100 vrf far-edge
+ bgp router-id 0.0.0.2
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ bgp bestpath bandwidth default-weight-for-missing
+ !
+ address-family ipv6 unicast
+  rt vpn import 100:2
+  import vpn
+ exit-address-family
+exit
+!
+router bgp 100 vrf cloud
+ bgp router-id 0.0.0.2
+ no bgp ebgp-requires-policy
+ no bgp default ipv4-unicast
+ bgp bestpath bandwidth default-weight-for-missing
+ !
+ address-family ipv6 unicast
+  rt vpn import 100:3
+  import vpn
+ exit-address-family
+exit
+!
+router ospf6 vrf client-edge
+ ospf6 router-id 0.0.0.2
+ redistribute bgp
+exit
+!
+router isis srv6
+ is-type level-1
+ net 49.0001.0002.0002.0002.00
+ topology ipv6-unicast
+ segment-routing on
+exit
+!
+segment-routing
+ srv6
+  locators
+   locator Loc
+    prefix b:0:0:2::/64 block-len 40 node-len 24 func-bits 16
+   exit
+   !
+  exit
+  !
+ exit
+ !
+exit
+!
+end
